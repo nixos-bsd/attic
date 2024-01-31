@@ -71,6 +71,6 @@ in rustPlatform.buildRustPackage rec {
     homepage = "https://github.com/zhaofengli/attic";
     license = licenses.asl20;
     maintainers = with maintainers; [ zhaofengli ];
-    platforms = platforms.linux ++ platforms.darwin;
+    platforms = platforms.linux ++ platforms.darwin ++ platforms.freebsd;
   };
 }

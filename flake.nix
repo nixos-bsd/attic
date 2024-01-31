@@ -2,7 +2,7 @@
   description = "A Nix binary cache server";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:rhelmot/nixpkgs/freebsd-staging";
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
     flake-utils.url = "github:numtide/flake-utils";
 
@@ -18,7 +18,7 @@
   };
 
   outputs = { self, nixpkgs, nixpkgs-stable, flake-utils, crane, ... }: let
-    supportedSystems = flake-utils.lib.defaultSystems ++ [ "riscv64-linux" ];
+    supportedSystems = flake-utils.lib.defaultSystems ++ [ "riscv64-linux" "x86_64-freebsd14" ];
 
     makeCranePkgs = pkgs: let
       craneLib = crane.mkLib pkgs;

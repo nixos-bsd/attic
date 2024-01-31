@@ -6,6 +6,7 @@
 # expression is not tested by CI so to not slow down the hot path.
 
 { stdenv
+, clangStdenv
 , lib
 , craneLib
 , rustPlatform
@@ -19,6 +20,7 @@
 , boost
 , darwin
 , libiconv
+, libcxx
 }:
 
 let
@@ -63,8 +65,11 @@ let
     ATTIC_DISTRIBUTOR = "attic";
 
     # Workaround for https://github.com/NixOS/nixpkgs/issues/166205
-    env = lib.optionalAttrs stdenv.cc.isClang {
+    env = lib.optionalAttrs (stdenv.cc.isClang && !stdenv.isFreeBSD) {
       NIX_LDFLAGS = "-l${stdenv.cc.libcxx.cxxabi.libName}";
+    } // lib.optionalAttrs (stdenv.cc.isGNU && stdenv.isFreeBSD) {
+      # positively nightmarish
+      NIX_LDFLAGS = "-lstdc++ -L${libcxx}/lib";
     };
 
     # See comment in `attic-tests`
@@ -86,7 +91,7 @@ let
       homepage = "https://github.com/zhaofengli/attic";
       license = licenses.asl20;
       maintainers = with maintainers; [ zhaofengli ];
-      platforms = platforms.linux ++ platforms.darwin;
+      platforms = platforms.linux ++ platforms.darwin ++ platforms.freebsd;
     };
   } // args);
 
