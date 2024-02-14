@@ -3,6 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:rhelmot/nixpkgs/freebsd-staging";
+    nix = {
+      url = "github:rhelmot/nix/freebsd-staging";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-regression.follows = "nixpkgs";
+    };
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.11";
     flake-utils.url = "github:numtide/flake-utils";
 
@@ -17,8 +22,8 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, flake-utils, crane, ... }: let
-    supportedSystems = flake-utils.lib.defaultSystems ++ [ "riscv64-linux" "x86_64-freebsd14" ];
+  outputs = { self, nixpkgs, nixpkgs-stable, flake-utils, crane, nix, ... }: let
+    supportedSystems = flake-utils.lib.defaultSystems ++ [ "riscv64-linux" "x86_64-freebsd" ];
 
     makeCranePkgs = pkgs: let
       craneLib = crane.mkLib pkgs;
@@ -26,7 +31,7 @@
   in flake-utils.lib.eachSystem supportedSystems (system: let
     pkgs = import nixpkgs {
       inherit system;
-      overlays = [];
+      overlays = [ nix.overlays.default ];
     };
     cranePkgs = makeCranePkgs pkgs;
 
