@@ -21,6 +21,7 @@
 , darwin
 , libiconv
 , libcxx
+, xz
 }:
 
 let
@@ -39,7 +40,7 @@ let
   ];
 
   buildInputs = [
-    nix boost
+    nix boost xz
   ] ++ lib.optionals stdenv.isDarwin [
     darwin.apple_sdk.frameworks.SystemConfiguration
     libiconv
@@ -70,6 +71,8 @@ let
     } // lib.optionalAttrs (stdenv.cc.isGNU && stdenv.isFreeBSD) {
       # positively nightmarish
       NIX_LDFLAGS = "-lstdc++ -L${libcxx}/lib";
+    } // lib.optionalAttrs stdenv.isFreeBSD {
+      NIX_CFLAGS_COMPILE = "-I${nix.dev}/include/nix";
     };
 
     # See comment in `attic-tests`

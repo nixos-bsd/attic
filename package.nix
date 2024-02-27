@@ -9,6 +9,7 @@
 , installShellFiles
 , nix
 , boost
+, xz
 , darwin
 
 # Only build the client
@@ -36,7 +37,7 @@ in rustPlatform.buildRustPackage rec {
   ];
 
   buildInputs = [
-    nix boost
+    nix boost xz
   ] ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
     SystemConfiguration
   ]);
